@@ -4,6 +4,43 @@
 <html>
 <head>
 <title>Book Reviews - 3-B.com</title>
+
+<?php
+	$data = array();
+	$i = 0;
+	$database = OpenCon();
+
+	//query the database table and display information
+	$data_temp = $database->query('SELECT * FROM Reviews WHERE isbn = ' . $_GET['isbn']);
+
+	while($row = $data_temp->fetch_assoc()){
+		$data[$i] = $row;
+		$i++;
+	}
+
+	/**
+	 * makes a databse connection
+	 * @return Mysqli
+	 */
+	 function OpenCon(){
+		 $dbhost = "localhost";
+		 $dbuser = "201709_471_g02";
+		 $dbpass = "zNueptTgd6Kokzk1Vtia";
+		 $db = "201709_471_g02";
+
+		 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
+		 return $conn;
+	 }
+
+	 /**
+		* closes database Connection
+		* @param $conn the database connection
+		*/
+	 function CloseCon($conn){
+		 $conn->close();
+	 }
+?>
+
 <style>
 .field_set
 {
@@ -19,21 +56,26 @@
 				<h5> Reviews For:</h5>
 			</td>
 			<td align="left">
-				<h5> iuhdf</h5>
+				<h5> <?php echo $data[0]['name'] ?></h5>
 			</td>
 		</tr>
-			
+
 		<tr>
 			<td colspan="2">
 			<div id="bookdetails" style="overflow:scroll;height:200px;width:300px;border:1px solid black;">
 			<table>
-			<tr><p></p></tr><tr><p>good book</p></tr><tr><p>Good book1</p></tr>			</table>
+			<tr>
+				<p></p>
+			</tr>
+			<tr><p><?php echo $data[0]['comments'] ?></p>
+			</tr>
+		</table>
 			</div>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
-				<form action="screen2.php" method="post">
+				<form action="screen3.php" method="post">
 					<input type="submit" value="Done">
 				</form>
 			</td>
@@ -43,4 +85,3 @@
 </body>
 
 </html>
-

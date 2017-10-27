@@ -2,11 +2,55 @@
 <!-- UI: Prithviraj Narahari, php code: Alexander Martens -->
 <head>
 <title> CUSTOMER REGISTRATION </title>
+
+	<?php
+
+		$data = array();
+		$i = 0;
+		$database = OpenCon();
+
+		//query the database table and display information
+		if(isset($_POST['username'])){
+
+			$data_temp = $database->query('SELECT * FROM Reviews WHERE isbn = ' . $_GET['isbn']);
+
+			while($row = $data_temp->fetch_assoc()){
+				$data[$i] = $row;
+				$i++;
+			}
+			echo "<p> inside username if statement </p>";
+			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/customer_registration.php");
+		}
+
+		/**
+		 * makes a databse connection
+		 * @return Mysqli
+		 */
+		 function OpenCon(){
+			 $dbhost = "localhost";
+			 $dbuser = "201709_471_g02";
+			 $dbpass = "zNueptTgd6Kokzk1Vtia";
+			 $db = "201709_471_g02";
+
+			 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
+			 return $conn;
+		 }
+
+		 /**
+			* closes database Connection
+			* @param $conn the database connection
+			*/
+		 function CloseCon($conn){
+			 $conn->close();
+		 }
+
+ 	?>
+
 </head>
 <body>
 	<table align="center" style="border:2px solid blue;">
 		<tr>
-			<form id="register" action="confirm_order.php" method="post">
+			<form id="register" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 			<td align="right">
 				Username<span style="color:red">*</span>:
 			</td>
@@ -104,7 +148,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="center"> 
+			<td colspan="2" align="center">
 				<input type="submit" id="register_submit" name="register_submit" value="Register">
 			</td>
 			</form>
