@@ -3,59 +3,64 @@
 <head>
 <title> CUSTOMER REGISTRATION </title>
 
-	<?php
+<?php
 
-		$data = array();
-		$i = 0;
-		$database = OpenCon();
+	$data = array();
+	$exist = False;
+	$database = OpenCon();
 
-		//query the database table and display information
-		if(isset($_POST['username'])){
+	//query the database table and display information
+	if(isset($_POST['username'])){
 
-			$data_temp = $database->query('SELECT * FROM Reviews WHERE isbn = ' . $_GET['isbn']);
+		$result = $database->query("SELECT username FROM user WHERE username='" . $_POST['username'] . "'");
 
-			while($row = $data_temp->fetch_assoc()){
-				$data[$i] = $row;
-				$i++;
-			}
-			echo "<p> inside username if statement </p>";
-			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/customer_registration.php");
+		if($result->num_rows == 0){
+			$database->query("INSERT INTO user (username, fname, lname, pin) VALUES('" . $_POST['username'] . "','"
+											. $_POST['firstname'] . "','" . $_POST['lastname'] . "','" . $_POST['password'] . "');");
+			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
+		} else {
+			$exist = True;
 		}
 
-		/**
-		 * makes a databse connection
-		 * @return Mysqli
-		 */
-		 function OpenCon(){
-			 $dbhost = "localhost";
-			 $dbuser = "201709_471_g02";
-			 $dbpass = "zNueptTgd6Kokzk1Vtia";
-			 $db = "201709_471_g02";
+	}
 
-			 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
-			 return $conn;
-		 }
+	/**
+	 * makes a databse connection
+	 * @return Mysqli
+	 */
+	 function OpenCon(){
+		 $dbhost = "localhost";
+		 $dbuser = "201709_471_g02";
+		 $dbpass = "zNueptTgd6Kokzk1Vtia";
+		 $db = "201709_471_g02";
 
-		 /**
-			* closes database Connection
-			* @param $conn the database connection
-			*/
-		 function CloseCon($conn){
-			 $conn->close();
-		 }
+		 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
+		 return $conn;
+	 }
 
- 	?>
+	 /**
+		* closes database Connection
+		* @param $conn the database connection
+		*/
+	 function CloseCon($conn){
+		 $conn->close();
+	 }
+
+?>
 
 </head>
 <body>
 	<table align="center" style="border:2px solid blue;">
 		<tr>
-			<form id="register" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form id="register" action="<?php echo $_SERVER['SELF_PHP']; ?>" method="post">
 			<td align="right">
 				Username<span style="color:red">*</span>:
 			</td>
 			<td align="left" colspan="3">
 				<input type="text" id="username" name="username" placeholder="Enter your username">
+				<?php if($exist){ ?>
+					<span style="color: red">username already exist</span>
+				<?php } ?>
 			</td>
 		</tr>
 		<tr>
@@ -160,4 +165,5 @@
 		</tr>
 	</table>
 </body>
+
 </HTML>
