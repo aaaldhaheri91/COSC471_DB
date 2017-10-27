@@ -52,7 +52,7 @@
 <body>
 	<table align="center" style="border:2px solid blue;">
 		<tr>
-			<form id="register" action="<?php echo $_SERVER['SELF_PHP']; ?>" method="post">
+			<form id="register" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 			<td align="right">
 				Username<span style="color:red">*</span>:
 			</td>
