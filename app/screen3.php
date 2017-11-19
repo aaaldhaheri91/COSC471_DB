@@ -12,6 +12,11 @@
 
 		$data = array();
 		$i = 0;
+		$shopping_cart_total = 0;
+
+		if(isset($_SESSION['shopping_cart'])){
+
+		}
 
 		$db_session = new DB_Session();
 		$database = $db_session->OpenCon();
@@ -29,9 +34,8 @@
 				$query = search_isbn();
 
 			$data = query_database($database, $query);
-			var_dump($data);
-		}
 
+		}
 
 
 		/**
@@ -126,7 +130,7 @@
 		<tr>
 			<td align="left">
 
-					<h6> <fieldset>Your Shopping Cart has 0 items</fieldset> </h6>
+					<h6> <fieldset>Your Shopping Cart has <?php echo $shopping_cart_total ?> items</fieldset> </h6>
 
 			</td>
 			<td>
@@ -142,35 +146,31 @@
 		<td style="width: 350px" colspan="3" align="center">
 			<div id="bookdetails" style="overflow:scroll;height:180px;width:400px;border:1px solid black;background-color:LightBlue">
 			<table>
-			<tr>
-				<td align='left'>
-					<button name='btnCart' id='btnCart' onClick='cart("123441", "", "Array", "all")'>Add to Cart</button>
-				</td>
-				<td rowspan='2' align='left'>
-					<?php echo $data[0]['title'] ?> </br>By <?php echo $data[0]['author'] ?></br>
-					<b>Publisher:</b> <?php echo $data[0]['publisher'] ?>,</br>
-					<b>ISBN:</b> <?php echo $data[0]['isbn'] ?></t> <b>Price:</b> <?php echo $data[0]['price'] ?>
-				</td>
-			</tr>
-			<tr>
-				<td align='left'><button name='review' id='review' onClick='review(<?php echo $data[0]['isbn'] ?>)'>Reviews</button>
-				</td>
-			</tr>
-			<tr>
-				<td colspan='2'><p>_______________________________________________</p></td>
-			</tr>
-			<tr>
-				<td align='left'><button name='btnCart' id='btnCart' onClick='cart("978-0316055437", "", "Array", "all")'>Add to Cart</button>
-				</td>
-				<td rowspan='2' align='left'><?php echo $data[1]['title'] ?></br>By <?php echo $data[1]['author'] ?></br>
-					<b>Publisher:</b> <?php echo $data[1]['publisher'] ?>,</br>
-					<b>ISBN:</b> <?php echo $data[1]['isbn'] ?></t> <b>Price:</b> <?php echo $data[1]['price'] ?>
-				</td>
-			</tr>
-				<tr>
-					<td align='left'><button name='review' id='review' onClick='review(<?php echo $data[1]['isbn'] ?>)'>Reviews</button>
-					</td>
-				</tr>
+				<?php
+					if(empty($data))
+						echo "<p> No results, Please try again by clicking on New Search";
+
+					foreach($data as $row){
+						echo "<tr>
+							<td align='left'>
+								<button name='btnCart' id='btnCart' onClick='cart('123441', '', 'Array', 'all')'>Add to Cart</button>
+							</td>
+							<td rowspan='2' align='left'>" .
+								$row['title'] . "</br>By " . $row['Fname'] . "&nbsp" . $row['Lname'] . "</br>
+								<b>Publisher:</b>" . $row['publisherName'] . ",</br>
+								<b>ISBN:</b>" . $row['isbn'] . "</t> <b>Price:</b>" . $row['price'] . "
+							</td>
+						</tr>
+						<tr>
+							<td align='left'><button name='review' id='review' onClick='review(" . $row['isbn'] . ")'>Reviews</button>
+							</td>
+						</tr>
+						<tr>
+							<td colspan='2'><p>_______________________________________________</p></td>
+						</tr>";
+					}
+				?>
+
 				<!-- <tr>
 					<td colspan='2'><p>_______________________________________________</p>
 					</td>
@@ -200,11 +200,11 @@
 				<tr>
 					<td align='left'><button name='review' id='review' onClick='review("978-0590353427", "Harry Potter and the Sorcerer Stone")'>Reviews</button>
 					</td>
-				</tr> -->
+				</tr>
 				<tr>
 					<td colspan='2'><p>_______________________________________________</p>
 					</td>
-				</tr>
+				</tr> -->
 			</table>
 			</div>
 
