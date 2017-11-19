@@ -12,7 +12,7 @@
 	//query the database table and display information
 	if(isset($_POST['username'])){
 
-		$result = $database->query("SELECT username FROM user WHERE username='" . $_POST['username'] . "'");
+		$result = $database->query("SELECT username FROM users WHERE username='" . $_POST['username'] . "'");
 
 		if($result->num_rows == 0){
 			$database->query("INSERT INTO user (username, fname, lname, pin) VALUES('" . $_POST['username'] . "','"
@@ -52,7 +52,7 @@
 <body>
 	<table align="center" style="border:2px solid blue;">
 		<tr>
-			<form id="register" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+			<form id="register" action="<?php $_SERVER['PHP_SELF']; ?>" method="post">
 			<td align="right">
 				Username<span style="color:red">*</span>:
 			</td>

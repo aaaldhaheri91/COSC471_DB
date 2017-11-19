@@ -5,39 +5,110 @@
 	<title> Search Result - 3-B.com </title>
 
 	<?php
+		error_reporting(E_ALL);
+		ini_set("display_errors","On");
+		$filepath = realpath(dirname(__FILE__));
+		require_once($filepath .'/db_session.php');
+
 		$data = array();
 		$i = 0;
-		$database = OpenCon();
 
-		//query the database table and display information
-		$data_temp = $database->query('SELECT * FROM Books');
+		$db_session = new DB_Session();
+		$database = $db_session->OpenCon();
 
-		while($row = $data_temp->fetch_assoc()){
-			$data[$i] = $row;
-			$i++;
+		if(isset($_GET['searchfor'])){
+			if($_GET['searchon'][0] == "anywhere")
+				$query = search_anywhere();
+			else if($_GET['searchon'][0] == 'title')
+				$query = search_title();
+			else if($_GET['searchon'][0] == 'author')
+				$query = search_author();
+			else if($_GET['searchon'][0] == 'publisher')
+				$query = search_publisher();
+			else if($_GET['searchon'][0] == 'isbn')
+				$query = search_isbn();
+
+			$data = query_database($database, $query);
+			var_dump($data);
+		}
+
+
+
+		/**
+		* This searches based on book title, author, publisher, or isbn
+		* @return query is the SQL query
+		*/
+		function search_anywhere(){
+			$query = "SELECT * FROM books NATURAL JOIN authors
+								WHERE title = '" . $_GET['searchfor'] . "'
+								OR isbn = '" . $_GET['searchfor'] . "'
+								OR publisherName = '" . $_GET['searchfor'] . "'
+								OR Fname = '" . $_GET['searchfor'] . "'
+								OR Lname = '" . $_GET['searchfor'] . "'; ";
+			return $query;
 		}
 
 		/**
-		 * makes a databse connection
-		 * @return Mysqli
-		 */
-		 function OpenCon(){
-			 $dbhost = "localhost";
-			 $dbuser = "201709_471_g02";
-			 $dbpass = "zNueptTgd6Kokzk1Vtia";
-			 $db = "201709_471_g02";
-
-			 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
-			 return $conn;
+		* This searches based on book title
+		* @return query is the SQL query
+		*/
+		 function search_title(){
+			 $query = "SELECT * FROM books NATURAL JOIN authors
+			 					 WHERE title = '" . $_GET['searchfor'] . "'; ";
+			 return $query;
 		 }
 
 		 /**
-		  * closes database Connection
-			* @param $conn the database connection
-			*/
-		 function CloseCon($conn){
-			 $conn->close();
+ 		 * This searches based on book author
+ 		 * @return query is the SQL query
+ 		 */
+		 function search_author(){
+			 $names = explode(' ', $_GET['searchfor']);
+			 $query = "SELECT * FROM books NATURAL JOIN authors
+			 					 WHERE Fname = '" . $names[0] . "' and Lname = '" . $names[1] . "';";
+			 return $query;
 		 }
+
+		 /**
+ 		 * This searches based on book publisher
+ 		 * @return query is the SQL query
+ 		 */
+		 function search_publisher(){
+			 $query = "SELECT * FROM books NATURAL JOIN authors
+			 					 WHERE publisherName = '" . $_GET['searchfor'] . "';";
+			 return $query;
+		 }
+
+		 /**
+ 		 * This searches based on book isbn
+ 		 * @return query is the SQL query
+ 		 */
+		 function search_isbn(){
+			 $query = "SELECT * FROM books NATURAL JOIN authors
+			 					 WHERE isbn = '" . $_GET['searchfor'] . "';";
+			 return $query;
+		 }
+
+		 /**
+		  * This function query database based on query string passed in
+			* @param database is the database connection session
+			* @param query is the SQL query to pass to the database
+			* @return data_temp is the result of the quering the database
+			*/
+			function query_database($database, $query){
+				$data_temp = array();
+				$i = 0;
+
+				$result = $database->query($query);
+ 			 	while($row = $result->fetch_assoc()){
+ 			 		$data_temp[$i] = $row;
+ 					$i++;
+ 				}
+ 			 	return $data_temp;
+
+			}
+
+
 	?>
 	<script>
 	//redirect to reviews page

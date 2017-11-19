@@ -11,7 +11,7 @@
 	$database = OpenCon();
 
 	//query the database table and display information
-	$data_temp = $database->query('SELECT * FROM Reviews WHERE isbn = ' . $_GET['isbn']);
+	$data_temp = $database->query('SELECT * FROM reviews WHERE isbn = ' . $_GET['isbn']);
 
 	while($row = $data_temp->fetch_assoc()){
 		$data[$i] = $row;
@@ -56,7 +56,7 @@
 				<h5> Reviews For:</h5>
 			</td>
 			<td align="left">
-				<h5> <?php echo $data[0]['name'] ?></h5>
+				<h5> <?php echo $data[0]['title'] ?></h5>
 			</td>
 		</tr>
 
@@ -67,7 +67,7 @@
 			<tr>
 				<p></p>
 			</tr>
-			<tr><p><?php echo $data[0]['comments'] ?></p>
+			<tr><p><?php echo $data[0]['description'] ?></p>
 			</tr>
 		</table>
 			</div>
