@@ -46,13 +46,15 @@
 		if(isset($_GET['isbn'])){
 			foreach($data as $row){
 				if($row['isbn'] == $_GET['isbn']){
-					$_SESSION[$row['title']]['isbn'] = $row['isbn'];
-					$_SESSION[$row['title']]['title'] = $row['title'];
-					$_SESSION[$row['title']]['price'] = $row['price'];
-					$_SESSION[$row['title']]['Fname'] = $row['Fname'];
-					$_SESSION[$row['title']]['Lname'] = $row['Lname'];
-					$_SESSION[$row['title']]['publisherName'] = $row['publisherName'];
-					$_SESSION['shopping_cart'] += 1;
+					if(!isset($_SESSION[$row['title']])){
+						$_SESSION[$row['title']]['isbn'] = $row['isbn'];
+						$_SESSION[$row['title']]['title'] = $row['title'];
+						$_SESSION[$row['title']]['price'] = $row['price'];
+						$_SESSION[$row['title']]['Fname'] = $row['Fname'];
+						$_SESSION[$row['title']]['Lname'] = $row['Lname'];
+						$_SESSION[$row['title']]['publisherName'] = $row['publisherName'];
+						$_SESSION['shopping_cart'] += 1;
+					}
 				}
 			}
 		}
