@@ -2,6 +2,14 @@
 <!DOCTYPE HTML>
 <head>
 	<title>Shopping Cart</title>
+	<?php
+		error_reporting(E_ALL);
+		ini_set("display_errors","On");
+		session_start();
+		$filepath = realpath(dirname(__FILE__));
+		require_once($filepath .'/db_session.php');
+		
+	?>
 	<script>
 	//remove from cart
 	function del(isbn){
@@ -20,12 +28,12 @@
 			<td align="center">
 				<form id="new_search" action="screen2.php" method="post">
 					<input type="submit" name="search" id="search" value="New Search">
-				</form>								
+				</form>
 			</td>
 			<td align="center">
 				<form id="exit" action="screen1.php" method="post">
 					<input type="submit" name="exit" id="exit" value="EXIT 3-B.com">
-				</form>					
+				</form>
 			</td>
 		</tr>
 		<tr>
@@ -39,16 +47,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="center">				
+			<td align="center">
 					<input type="submit" name="recalculate_payment" id="recalculate_payment" value="Recalculate Payment">
 				</form>
 			</td>
 			<td align="center">
 				&nbsp;
 			</td>
-			<td align="center">			
+			<td align="center">
 				Subtotal:  $0			</td>
 		</tr>
 	</table>
 </body>
-

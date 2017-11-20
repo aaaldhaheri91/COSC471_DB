@@ -15,9 +15,11 @@
 	</table>
 </body>
 <?php
+session_start();
+if(!isset($_SESSION['shopping_cart']))
+	$_SESSION['shopping_cart'] = 0;
 if( isset($_POST['group1'])){
-	echo "I am inside the if statement";
-	header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/" . $_POST['group1']);   
+	header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/" . $_POST['group1']);
 }
 ?>
 </html>
