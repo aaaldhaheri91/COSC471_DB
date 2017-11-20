@@ -14,6 +14,8 @@
 		$data = array();
 		$i = 0;
 		$shopping_cart_total = 0;
+		$db_session = new DB_Session();
+		$database = $db_session->OpenCon();
 
 		if(isset($_SESSION['shopping_cart']))
 			$shopping_cart_total = $_SESSION['shopping_cart'];
@@ -22,9 +24,6 @@
 
 		if(is_array($_GET['searchon']))
 			$_GET['searchon'] = $_GET['searchon'][0];
-
-		$db_session = new DB_Session();
-		$database = $db_session->OpenCon();
 
 		if(isset($_GET['searchfor'])){
 			if($_GET['searchon'] == "anywhere")
@@ -39,6 +38,7 @@
 				$query = search_isbn();
 
 			$data = query_database($database, $query);
+			$db_session->CloseCon($database);
 
 		}
 
@@ -135,7 +135,7 @@
 							$row['button'] = false;
 					else if(isset($_SESSION[$row['title']]))
 						$row['button'] = true;
-				 	else
+					else
 						$row['button'] = false;
 
  			 		$data_temp[$i] = $row;

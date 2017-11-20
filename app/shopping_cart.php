@@ -8,7 +8,9 @@
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
-		
+
+
+
 	?>
 	<script>
 	//remove from cart

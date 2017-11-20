@@ -6,39 +6,29 @@
 <title>Book Reviews - 3-B.com</title>
 
 <?php
+	error_reporting(E_ALL);
+	ini_set("display_errors","On");
+	session_start();
+	$filepath = realpath(dirname(__FILE__));
+	require_once($filepath .'/db_session.php');
+
 	$data = array();
+	$data_temp = array();
 	$i = 0;
-	$database = OpenCon();
+	$db_session = new DB_Session();
+	$database = $db_session->OpenCon();
 
 	//query the database table and display information
-	$data_temp = $database->query('SELECT * FROM reviews WHERE isbn = ' . $_GET['isbn']);
+	$data_temp = $database->query('SELECT * FROM reviews NATURAL JOIN books WHERE isbn = ' . $_GET['isbn']);
+	if(mysqli_num_rows($data_temp) == 0)
+		$data_temp = $database->query('SELECT * FROM books WHERE isbn = ' . $_GET['isbn']);
 
 	while($row = $data_temp->fetch_assoc()){
 		$data[$i] = $row;
 		$i++;
 	}
 
-	/**
-	 * makes a databse connection
-	 * @return Mysqli
-	 */
-	 function OpenCon(){
-		 $dbhost = "localhost";
-		 $dbuser = "201709_471_g02";
-		 $dbpass = "zNueptTgd6Kokzk1Vtia";
-		 $db = "201709_471_g02";
 
-		 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
-		 return $conn;
-	 }
-
-	 /**
-		* closes database Connection
-		* @param $conn the database connection
-		*/
-	 function CloseCon($conn){
-		 $conn->close();
-	 }
 ?>
 
 <style>
@@ -56,7 +46,7 @@
 				<h5> Reviews For:</h5>
 			</td>
 			<td align="left">
-				<h5> <?php echo $data[0]['title'] ?></h5>
+				<h5> <?php echo $data[0]['title'];?></h5>
 			</td>
 		</tr>
 
@@ -67,7 +57,13 @@
 			<tr>
 				<p></p>
 			</tr>
-			<tr><p><?php echo $data[0]['description'] ?></p>
+			<tr><p><?php
+							if(isset($data[0]['description']))
+							 	echo $data[0]['description'];
+							else
+							 	echo "No reviews";
+
+					?></p>
 			</tr>
 		</table>
 			</div>
