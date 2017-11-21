@@ -4,10 +4,17 @@
 <title> CUSTOMER REGISTRATION </title>
 
 <?php
+	error_reporting(E_ALL);
+	ini_set("display_errors","On");
+	session_start();
+	$filepath = realpath(dirname(__FILE__));
+	require_once($filepath .'/db_session.php');
 
 	$data = array();
 	$exist = False;
-	$database = OpenCon();
+	$db_session = new DB_Session();
+	$database = $db_session->OpenCon();
+
 
 	//query the database table and display information
 	if(isset($_POST['username'])){
@@ -15,36 +22,26 @@
 		$result = $database->query("SELECT username FROM users WHERE username='" . $_POST['username'] . "'");
 
 		if($result->num_rows == 0){
-			$database->query("INSERT INTO user (username, fname, lname, pin) VALUES('" . $_POST['username'] . "','"
-											. $_POST['firstname'] . "','" . $_POST['lastname'] . "','" . $_POST['password'] . "');");
-			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
+			//insert address information
+			$database->query("INSERT INTO residence (address, city, state, zip)
+											  VALUES('" . $_POST['address'] . "','" . $_POST['city'] . "','" . $_POST['state'] . "','" . $_POST['zip'] . "');");
+			$id = $database->insert_id;
+			//insert user information
+			$result = $database->query("INSERT INTO users (username, pin, Fname, Lname, addressId)
+											  VALUES('" . $_POST['username'] . "','" . $_POST['pin'] . "','" . $_POST['firstname'] . "','" . $_POST['lastname'] . "','" . $id . "');");
+			if($result === false)
+				echo "insert into users failed<br>";
+
+			$result = $database->query("INSERT INTO credit_cards (card_number, username, type, expiration)
+												VALUES('" . $_POST['card_number'] . "','" . $_POST['username'] . "','" . $_POST['credit_card'] . "','" . $_POST['expiration'] . "');");
+			if($result === false)
+				echo "insert into credit_cards failed";
+			//header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
 		} else {
 			$exist = True;
 		}
 
 	}
-
-	/**
-	 * makes a databse connection
-	 * @return Mysqli
-	 */
-	 function OpenCon(){
-		 $dbhost = "localhost";
-		 $dbuser = "201709_471_g02";
-		 $dbpass = "zNueptTgd6Kokzk1Vtia";
-		 $db = "201709_471_g02";
-
-		 $conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connection failed: %s\n" . $conn->connect_error);
-		 return $conn;
-	 }
-
-	 /**
-		* closes database Connection
-		* @param $conn the database connection
-		*/
-	 function CloseCon($conn){
-		 $conn->close();
-	 }
 
 ?>
 
@@ -57,7 +54,7 @@
 				Username<span style="color:red">*</span>:
 			</td>
 			<td align="left" colspan="3">
-				<input type="text" id="username" name="username" placeholder="Enter your username">
+				<input type="text" id="username" name="username" placeholder="Enter your username" required>
 				<?php if($exist){ ?>
 					<span style="color: red">username already exist</span>
 				<?php } ?>
@@ -68,13 +65,13 @@
 				PIN<span style="color:red">*</span>:
 			</td>
 			<td align="left">
-				<input type="password" id="pin" name="pin">
+				<input type="password" id="pin" name="pin" required>
 			</td>
 			<td align="right">
 				Re-type PIN<span style="color:red">*</span>:
 			</td>
 			<td align="left">
-				<input type="password" id="retype_pin" name="retype_pin">
+				<input type="password" id="retype_pin" name="retype_pin" required>
 			</td>
 		</tr>
 		<tr>
@@ -82,7 +79,7 @@
 				Firstname<span style="color:red">*</span>:
 			</td>
 			<td colspan="3" align="left">
-				<input type="text" id="firstname" name="firstname" placeholder="Enter your firstname">
+				<input type="text" id="firstname" name="firstname" placeholder="Enter your firstname" required>
 			</td>
 		</tr>
 		<tr>
@@ -90,7 +87,7 @@
 				Lastname<span style="color:red">*</span>:
 			</td>
 			<td colspan="3" align="left">
-				<input type="text" id="lastname" name="lastname" placeholder="Enter your lastname">
+				<input type="text" id="lastname" name="lastname" placeholder="Enter your lastname" required>
 			</td>
 		</tr>
 		<tr>
@@ -98,7 +95,7 @@
 				Address<span style="color:red">*</span>:
 			</td>
 			<td colspan="3" align="left">
-				<input type="text" id="address" name="address">
+				<input type="text" id="address" name="address" required>
 			</td>
 		</tr>
 		<tr>
@@ -106,7 +103,7 @@
 				City<span style="color:red">*</span>:
 			</td>
 			<td colspan="3" align="left">
-				<input type="text" id="city" name="city">
+				<input type="text" id="city" name="city" required>
 			</td>
 		</tr>
 		<tr>
@@ -125,7 +122,7 @@
 				Zip<span style="color:red">*</span>:
 			</td>
 			<td align="left">
-				<input type="text" id="zip" name="zip">
+				<input type="text" id="zip" name="zip" required>
 			</td>
 		</tr>
 		<tr>
@@ -141,7 +138,7 @@
 				</select>
 			</td>
 			<td colspan="2" align="left">
-				<input type="text" id="card_number" name="card_number" placeholder="Credit card number">
+				<input type="text" id="card_number" name="card_number" placeholder="Credit card number" required>
 			</td>
 		</tr>
 		<tr>
@@ -149,7 +146,7 @@
 				Expiration Date<span style="color:red">*</span>:
 			</td>
 			<td colspan="2" align="left">
-				<input type="text" id="expiration" name="expiration" placeholder="MM/YY">
+				<input type="text" id="expiration" name="expiration" placeholder="MM/YY" required>
 			</td>
 		</tr>
 		<tr>
