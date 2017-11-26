@@ -38,6 +38,13 @@
 	border-width:4px;
 }
 </style>
+<script>
+
+	function redirect_search_result(isbn, searchfor, searchon, category){
+		window.location.href="screen3.php?searchfor=" + searchfor + "&searchon=" + searchon + "&category=" + category;
+	}
+
+</script>
 </head>
 <body>
 	<table align="center" style="border:1px solid blue;">
@@ -71,9 +78,10 @@
 		</tr>
 		<tr>
 			<td colspan="2" align="center">
-				<form action="screen3.php" method="post">
-					<input type="submit" value="Done">
-				</form>
+				<?php
+						echo "<button onClick='redirect_search_result(" . $_GET['isbn'] . ',"' . $_GET['searchfor'] . '","' . $_GET['searchon'] . '","' . $_GET['category'] . '"' . ")'>Done</button>";
+
+				 ?>
 			</td>
 		</tr>
 	</table>

@@ -43,7 +43,7 @@
 			<td>Category: </td>
 				<td><select name="category">
 						<option value='all' selected='selected'>All Categories</option>
-						<option value='OOP'>OOP</option><option value='Procdural Programming'>Proceudral Programming</option><option value='Database'>Database</option>
+						<option value='Object Oriented Programming'>OOP</option><option value='Procedural Programming'>Proceudral Programming</option><option value='Database'>Database</option>
 					</select>
 				</td>
 				</form>

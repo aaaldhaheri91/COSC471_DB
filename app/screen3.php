@@ -5,8 +5,8 @@
 	<title> Search Result - 3-B.com </title>
 
 	<?php
-		error_reporting(E_ALL);
-		ini_set("display_errors","On");
+		// error_reporting(E_ALL);
+		// ini_set("display_errors","On");
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
@@ -66,11 +66,13 @@
 		*/
 		function search_anywhere(){
 			$query = "SELECT * FROM books NATURAL JOIN authors
-								WHERE title = '" . $_GET['searchfor'] . "'
+								WHERE (title LIKE '%" . $_GET['searchfor'] . "%'
 								OR isbn = '" . $_GET['searchfor'] . "'
-								OR publisherName = '" . $_GET['searchfor'] . "'
-								OR Fname = '" . $_GET['searchfor'] . "'
-								OR Lname = '" . $_GET['searchfor'] . "'; ";
+								OR publisherName LIKE '%" . $_GET['searchfor'] . "%'
+								OR Fname LIKE '%" . $_GET['searchfor'] . "%'
+								OR Lname LIKE '%" . $_GET['searchfor'] . "%')";
+			if($_GET['category'] != 'all')
+				$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			return $query;
 		}
 
@@ -80,7 +82,9 @@
 		*/
 		 function search_title(){
 			 $query = "SELECT * FROM books NATURAL JOIN authors
-			 					 WHERE title = '" . $_GET['searchfor'] . "'; ";
+			 					 WHERE title LIKE '%" . $_GET['searchfor'] . "%'";
+			 if($_GET['category'] != 'all')
+					$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			 return $query;
 		 }
 
@@ -91,7 +95,9 @@
 		 function search_author(){
 			 $names = explode(' ', $_GET['searchfor']);
 			 $query = "SELECT * FROM books NATURAL JOIN authors
-			 					 WHERE Fname = '" . $names[0] . "' and Lname = '" . $names[1] . "';";
+			 					 WHERE Fname LIKE '%" . $names[0] . "%' and Lname LIKE '%" . $names[1] . "%'";
+			 if($_GET['category'] != 'all')
+					$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			 return $query;
 		 }
 
@@ -101,7 +107,9 @@
  		 */
 		 function search_publisher(){
 			 $query = "SELECT * FROM books NATURAL JOIN authors
-			 					 WHERE publisherName = '" . $_GET['searchfor'] . "';";
+			 					 WHERE publisherName LIKE '%" . $_GET['searchfor'] . "%'";
+			 if($_GET['category'] != 'all')
+					$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			 return $query;
 		 }
 
@@ -111,7 +119,9 @@
  		 */
 		 function search_isbn(){
 			 $query = "SELECT * FROM books NATURAL JOIN authors
-			 					 WHERE isbn = '" . $_GET['searchfor'] . "';";
+			 					 WHERE isbn = '" . $_GET['searchfor'] . "'";
+			 if($_GET['category'] != 'all')
+ 				$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			 return $query;
 		 }
 
@@ -150,8 +160,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script>
 	//redirect to reviews page
-	function review(isbn){
-		window.location.href="screen4.php?isbn="+ isbn;
+	function review(isbn, btn_id, searchfor, searchon, category){
+		window.location.href="screen4.php?isbn=" + isbn + "&searchfor=" + searchfor + "&searchon=" + searchon + "&category=" + category;
+
 	}
 	//add to cart
 	function cart(isbn, btn_id, searchfor, searchon, category){
@@ -202,7 +213,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td align='left'><button name='review' id='review' onClick='review(" . $row['isbn'] . ")'>Reviews</button>
+							<td align='left'><button name='review' id='review' onClick='review(" . $row['isbn'] . "," . '"btnCart' . $i .'","' . $_GET['searchfor'] . '","' . $_GET['searchon'] . '","' . $_GET['category'] . '"' . ")'>Reviews</button>
 							</td>
 						</tr>
 						<tr>
