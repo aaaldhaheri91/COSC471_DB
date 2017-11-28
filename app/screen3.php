@@ -66,11 +66,12 @@
 		*/
 		function search_anywhere(){
 			$query = "SELECT * FROM books NATURAL JOIN authors
-								WHERE (title LIKE '%" . $_GET['searchfor'] . "%'
-								OR isbn = '" . $_GET['searchfor'] . "'
-								OR publisherName LIKE '%" . $_GET['searchfor'] . "%'
-								OR Fname LIKE '%" . $_GET['searchfor'] . "%'
-								OR Lname LIKE '%" . $_GET['searchfor'] . "%')";
+								WHERE  (title LIKE '%" . $_GET['searchfor'] . "%'
+									OR isbn = '" . $_GET['searchfor'] . "'
+									OR publisherName LIKE '%" . $_GET['searchfor'] . "%'
+									OR Fname LIKE '%" . $_GET['searchfor'] . "%'
+									OR Lname LIKE '%" . $_GET['searchfor'] . "%')";
+								
 			if($_GET['category'] != 'all')
 				$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			return $query;
