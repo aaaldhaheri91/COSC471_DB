@@ -3,19 +3,51 @@
 <head>
 	<title>Shopping Cart</title>
 	<?php
-		error_reporting(E_ALL);
-		ini_set("display_errors","On");
+		// error_reporting(E_ALL);
+		// ini_set("display_errors","On");
 		session_start();
+		$filepath = realpath(dirname(__FILE__));
+		require_once($filepath .'/db_session.php');
 
 		$data = array();
 		$i = 0;
 		$shopping_cart_total = 0;
+
+		$db_session = new DB_Session();
+		$database = $db_session->OpenCon();
+
 
 		//delete book from shopping cart if delete button selected
 		if(isset($_GET['delIsbn'])){
 			foreach($_SESSION as $data){
 				if($data['isbn'] == $_GET['delIsbn']){
 					unset($_SESSION[$data['title']]);
+					$_SESSION['shopping_cart'] -= 1;
+				}
+			}
+		}
+
+		//chec if quantity changed for shopping cart
+		if(isset($_GET['stock'])){
+			if($_GET['title'] == 'Visual C')
+				$_GET['title'] .= '# 2008 How to Program';
+			$_SESSION[$_GET['title']]['stock'] = $_GET['stock'];
+		}
+
+		//Check if we have enough stock for the book
+		foreach($_SESSION as $data){
+			if(isset($data['title'])){
+				$query = "SELECT stock FROM books WHERE title='" . $data['title'] . "';";
+				$result = $database->query($query);
+
+				if(mysqli_num_rows($result) > 0){
+					while($row = $result->fetch_assoc()){
+						if($row['stock'] < $data['stock'])
+							$_SESSION[$data['title']]['is_available'] = false;
+						else
+							$_SESSION[$data['title']]['is_available'] = true;
+
+					}
 				}
 			}
 		}
@@ -53,6 +85,10 @@
 		$('#total').html('$' + total);
 	}
 
+	function check_stock(id, book_title){
+		window.location.href='shopping_cart.php?stock=' + $('#' + id).val() + "&title=" + book_title;
+	}
+
 	</script>
 </head>
 <body>
@@ -85,8 +121,11 @@
 							foreach ($_SESSION as $data) {
 								if(isset($data['title'])){
 									echo "<tr><td><button name='delete' onClick='del(" . $data['isbn'] . ")'>Delete Item </button></td>
-											  <td><p>" . $data['title'] . "<br><strong>By: </strong>" . $data['Fname'] . ' ' . $data['Lname'] . "</p></td>
-												<td><input id='quantity" . $i . "' type='text' style='width: 16px; height: 16px;' value='1'></td><td id='price" . $i . "'>" . $data['price'] . "</td></tr>";
+											  <td><p>" . $data['title'] . "<br><strong>By: </strong>" . $data['Fname'] . ' ' . $data['Lname'] . "</p></td>";
+									if($data['is_available'])
+										echo "<td><input onchange='check_stock(\"" . 'quantity' . $i . "\"" . ",\"" . $data['title'] . "\")' id='quantity" . $i . "' type='text' style='width: 16px; height: 16px;' value='" . $data['stock'] . "'></td><td id='price" . $i . "'>" . $data['price'] . "</td></tr>";
+									else
+										echo "<td><input onchange='check_stock(\"" . 'quantity' . $i . "\"" . ",\"" . $data['title'] . "\")' id='quantity" . $i . "' type='text' style='width: 16px; height: 16px;' value='" . $data['stock'] . "'><span style='color: red;'>Not enough stock</span></td><td id='price" . $i . "'>" . $data['price'] . "</td></tr>";
 									$i++;
 								}
 

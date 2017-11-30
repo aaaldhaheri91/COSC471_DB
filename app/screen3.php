@@ -5,8 +5,8 @@
 	<title> Search Result - 3-B.com </title>
 
 	<?php
-		// error_reporting(E_ALL);
-		// ini_set("display_errors","On");
+		error_reporting(E_ALL);
+		ini_set("display_errors","On");
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
@@ -17,10 +17,7 @@
 		$db_session = new DB_Session();
 		$database = $db_session->OpenCon();
 
-		if(isset($_SESSION['shopping_cart']))
-			$shopping_cart_total = $_SESSION['shopping_cart'];
-		else
-			$_SESSION['shopping_cart'] = 0;
+
 
 		if(is_array($_GET['searchon']))
 			$_GET['searchon'] = $_GET['searchon'][0];
@@ -53,11 +50,21 @@
 						$_SESSION[$row['title']]['Fname'] = $row['Fname'];
 						$_SESSION[$row['title']]['Lname'] = $row['Lname'];
 						$_SESSION[$row['title']]['publisherName'] = $row['publisherName'];
+						$_SESSION[$row['title']]['stock'] = 1;
+						$_SESSION[$row['title']]['is_available'] = true;
 						$_SESSION['shopping_cart'] += 1;
+						$data[$i]['button'] = true;
 					}
 				}
+				$i++;
 			}
 		}
+
+
+		if(isset($_SESSION['shopping_cart']))
+			$shopping_cart_total = $_SESSION['shopping_cart'];
+		else
+			$_SESSION['shopping_cart'] = 0;
 
 
 		/**
@@ -71,7 +78,7 @@
 									OR publisherName LIKE '%" . $_GET['searchfor'] . "%'
 									OR Fname LIKE '%" . $_GET['searchfor'] . "%'
 									OR Lname LIKE '%" . $_GET['searchfor'] . "%')";
-								
+
 			if($_GET['category'] != 'all')
 				$query .= " AND category LIKE '%" . $_GET['category'] . "%'";
 			return $query;
@@ -139,12 +146,7 @@
 				$result = $database->query($query);
  			 	while($row = $result->fetch_assoc()){
 
-					if(isset($_GET['isbn']))
-						if($row['isbn'] == $_GET['isbn'])
-							$row['button'] = true;
-						else
-							$row['button'] = false;
-					else if(isset($_SESSION[$row['title']]))
+					if(isset($_SESSION[$row['title']]))
 						$row['button'] = true;
 					else
 						$row['button'] = false;
