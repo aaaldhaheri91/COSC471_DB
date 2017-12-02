@@ -4,8 +4,8 @@
 <title> CUSTOMER REGISTRATION </title>
 
 <?php
-	error_reporting(E_ALL);
-	ini_set("display_errors","On");
+	// error_reporting(E_ALL);
+	// ini_set("display_errors","On");
 	session_start();
 	$filepath = realpath(dirname(__FILE__));
 	require_once($filepath .'/db_session.php');
@@ -17,7 +17,7 @@
 
 
 	//query the database table and display information
-	if(isset($_POST['username'])){
+	if(isset($_POST['username']) && $_POST['pin'] == $_POST['retype_pin']){
 
 		$result = $database->query("SELECT username FROM users WHERE username='" . $_POST['username'] . "'");
 
@@ -29,14 +29,22 @@
 			//insert user information
 			$result = $database->query("INSERT INTO users (username, pin, Fname, Lname, addressId)
 											  VALUES('" . $_POST['username'] . "','" . $_POST['pin'] . "','" . $_POST['firstname'] . "','" . $_POST['lastname'] . "','" . $id . "');");
-			if($result === false)
-				echo "insert into users failed<br>";
 
 			$result = $database->query("INSERT INTO credit_cards (card_number, username, type, expiration)
 												VALUES('" . $_POST['card_number'] . "','" . $_POST['username'] . "','" . $_POST['credit_card'] . "','" . $_POST['expiration'] . "');");
-			if($result === false)
-				echo "insert into credit_cards failed";
-			//header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
+
+			//save customer information in session in order to grab information from
+			//database in confirm_order.php file using this username
+			$_SESSION['customer']['username'] = $_POST['username'];
+			$_SESSION['customer']['credit_card_type'] = $_POST['credit_card'];
+			$_SESSION['customer']['card_number'] = $_POST['card_number'];
+			$_SESSION['customer']['address'] = $_POST['address'];
+			$_SESSION['customer']['city'] = $_POST['city'];
+			$_SESSION['customer']['state'] = $_POST['state'];
+			$_SESSION['customer']['zip'] = $_POST['zip'];
+
+
+			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
 		} else {
 			$exist = True;
 		}
@@ -62,6 +70,9 @@
 		</tr>
 		<tr>
 			<td align="right">
+				<?php if($_POST['pin'] != $_POST['retype_pin']){ ?>
+					<span style="color: red">Pins dont match</span>
+				<?php } ?>
 				PIN<span style="color:red">*</span>:
 			</td>
 			<td align="left">
