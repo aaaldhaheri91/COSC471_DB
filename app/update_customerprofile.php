@@ -4,15 +4,22 @@
 <title>UPDATE CUSTOMER PROFILE</title>
 
 </head>
+	<?php
+		error_reporting(E_ALL);
+		ini_set("display_errors","On");
+		session_start();
+		$filepath = realpath(dirname(__FILE__));
+		require_once($filepath .'/db_session.php');
+	?>
 <body>
 	<form id="update_profile" action="" method="post">
 	<table align="center" style="border:2px solid blue;">
 		<tr>
 			<td align="right">
-				Username: 
+				Username: &nbsp;<?php echo $_SESSION['customer']['username'] ?>
 			</td>
 			<td colspan="3" align="center">
-							</td>
+			</td>
 		</tr>
 		<tr>
 			<td align="right">
@@ -37,7 +44,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="right"> 
+			<td align="right">
 				Last Name<span style="color:red">*</span>:
 			</td>
 			<td colspan="3">
@@ -108,7 +115,7 @@
 				<input type="submit" id="update_submit" name="update_submit" value="Update">
 			</td>
 			</form>
-		<form id="cancel" action="user_login.php"  method="post">	
+		<form id="cancel" action="confirm_order.php"  method="post">
 			<td align="left" colspan="2">
 				<input type="submit" id="cancel_submit" name="cancel_submit" value="Cancel">
 			</td>
