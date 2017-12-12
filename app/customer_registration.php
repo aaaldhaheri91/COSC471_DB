@@ -38,10 +38,13 @@
 			$_SESSION['customer']['username'] = $_POST['username'];
 			$_SESSION['customer']['credit_card_type'] = $_POST['credit_card'];
 			$_SESSION['customer']['card_number'] = $_POST['card_number'];
+			$_SESSION['customer']['expiration'] = $_POST['expiration'];
 			$_SESSION['customer']['address'] = $_POST['address'];
 			$_SESSION['customer']['city'] = $_POST['city'];
 			$_SESSION['customer']['state'] = $_POST['state'];
 			$_SESSION['customer']['zip'] = $_POST['zip'];
+			$_SESSION['customer']['firstname'] = $_POST['firstname'];
+			$_SESSION['customer']['lastname'] = $_POST['lastname'];
 
 
 			header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");

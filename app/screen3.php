@@ -5,8 +5,8 @@
 	<title> Search Result - 3-B.com </title>
 
 	<?php
-		error_reporting(E_ALL);
-		ini_set("display_errors","On");
+		// error_reporting(E_ALL);
+		// ini_set("display_errors","On");
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
@@ -17,6 +17,13 @@
 		$db_session = new DB_Session();
 		$database = $db_session->OpenCon();
 
+		if(isset($_GET['check_out'])){
+			if(isset($_SESSION['customer']['username'])){
+				header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
+			} else {
+				header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/customer_registration.php");
+			}
+		}
 
 
 		if(is_array($_GET['searchon']))
@@ -173,6 +180,10 @@
 		window.location.href="screen3.php?isbn=" + isbn + "&searchfor=" + searchfor + "&searchon=" + searchon + "&category=" + category;
 	}
 
+	function check_out(){
+		window.location.href = "screen3.php?check_out=checkout";
+	}
+
 	</script>
 </head>
 <body>
@@ -267,9 +278,8 @@
 		</tr>
 		<tr>
 			<td align= "center">
-				<form action="" method="get">
-					<input type="submit" value="Proceed To Checkout" id="checkout" name="checkout">
-				</form>
+
+					<button onclick="check_out()">Proceed To Checkout</button>
 			</td>
 			<td align="center">
 				<form action="screen2.php" method="post">

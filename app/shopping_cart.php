@@ -16,6 +16,13 @@
 		$db_session = new DB_Session();
 		$database = $db_session->OpenCon();
 
+		if(isset($_GET['check_out'])){
+			if(isset($_SESSION['customer']['username'])){
+				header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/confirm_order.php");
+			} else {
+				header("Location: http://db2.emich.edu/~201709_cosc471_group02/COSC471_DB/app/customer_registration.php");
+			}
+		}
 
 		//delete book from shopping cart if delete button selected
 		if(isset($_GET['delIsbn'])){
@@ -89,15 +96,20 @@
 		window.location.href='shopping_cart.php?stock=' + $('#' + id).val() + "&title=" + book_title;
 	}
 
+	function check_out(){
+		window.location.href='shopping_cart.php?check_out=checkout';
+	}
+
 	</script>
 </head>
 <body>
 	<table align="center" style="border:2px solid blue;">
 		<tr>
 			<td align="center">
-				<form id="checkout" action="customer_registration.php" method="get">
+				<!-- <form id="checkout" action="customer_registration.php" method="get">
 					<input type="submit" name="checkout_submit" id="checkout_submit" value="Proceed to Checkout">
-				</form>
+				</form> -->
+				<button onclick="check_out()">Proceed to Checkout</button>
 			</td>
 			<td align="center">
 				<form id="new_search" action="screen2.php" method="post">

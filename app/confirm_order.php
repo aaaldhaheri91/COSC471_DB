@@ -6,8 +6,8 @@
 
 	<?php
 
-		error_reporting(E_ALL);
-		ini_set("display_errors","On");
+		// error_reporting(E_ALL);
+		// ini_set("display_errors","On");
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
