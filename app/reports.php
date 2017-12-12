@@ -4,6 +4,8 @@
 </head>
 <body>
 	<?php		
+		//error_reporting(E_ALL);
+		//ini_set("display_errors","On");
 		session_start();
 		$filepath = realpath(dirname(__FILE__));
 		require_once($filepath .'/db_session.php');
@@ -28,8 +30,7 @@
 
 
 //Calculate Monthly Totals-------------------------------------------------------------------------
-
-		
+	
 
 		$result = get_totals($database);
 
@@ -39,44 +40,37 @@
 
 		$sum = 0;
 		$divisor = 0;
-		$total = array();
+		$total = array(0,0,0,0,0,0,0,0,0,0,0,0);
+		$mname = array('January', 'Fedruary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 
 		while($row = $result->fetch_assoc()) {
 
 			$month = (int)substr($row['order_date'], 5, 2);
 
-			$total[$month] = ((float)substr($row['total'], 1) + $total[$month]);
+			$total[$month - 1] = ((float)substr($row['total'], 1) + $total[$month - 1]);
 
 		}
 
-
+		echo "<table align='center' border='2' style='border:2px solid blue;'><tr><td  align='center' colspan='2'>Monthly Average</td></tr>";
+		
 		for($i = 0; $i < 12; $i++) {
 				if($total[$i] != 0) {
-					$sum = $sum + $total[$i];
-					$divisor = $divisor + 1;
+					$total[$i] = ($total[$i] / 30);
+					echo "<tr><td align='center'>" . $mname[$i] . "</td><td align='center'>" . round($total[$i], 2) . "</td></tr>";
 				}
 			}
 
-		$monthly_ave = $sum / $divisor; 
+			echo "</table>";
 
-		echo "<table align='center' border='2' style='border:2px solid blue;'>
-			<tr>
-				<td  align='center' colspan='2>Sales Report</td>
-			</tr>
-			<tr>
-				<td  align='center'>Monthly Average</td>
-				<td  align='center'>" . $monthly_ave . "</td>
-			</tr>
-		</table>";
+
 
 //Calculate The Number of Reviews------------------------------------------------------------------
 
 		$result = get_review_num($database);
 
 		echo "<table align='center' border='2' style='border:2px solid blue;'><tr><td  align='center' colspan='2'>Book Report</td></tr>";
-			
-		$result = get_stock($database);
 
+		$result = get_stock($database);
 
 		while($row = $result->fetch_assoc()) {
 			echo "<tr><td align='center'>" . $row['title'] . "</td><td align='center'>" . $row['count(category)'] . "</td></tr>";
@@ -129,10 +123,6 @@
 
 			return $conn->query($query);
 		}
-
-	//	SELECT *, count(isbn) FROM reviews NATURAL JOIN books GROUP BY reviews.isbn 
-		//<td align='center'>" . $row2['count(isbn)'] . "</td>
-	//	$result2 = $conn->query("SELECT *, count(isbn) FROM reviews GROUP BY isbn");
 	?>
 
 
